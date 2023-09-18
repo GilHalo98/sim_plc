@@ -1,0 +1,9 @@
+// Test
+graph {
+	node [shape=circle]
+	conveyor_1 [label=conveyor_1 shape=Mrecord]
+	conveyor_2 [label=conveyor_2 shape=Mrecord]
+	grabadora_lazer [label=grabadora_lazer shape=Mrecord]
+	conveyor_3 [label=conveyor_3 shape=Mrecord]
+	conveyor_4 [label=conveyor_4 shape=Mrecord]
+}
