@@ -63,7 +63,8 @@ class Grafo():
             if not self.elemento_es_hoja(id_nodo):
                 # Expandimos la frontera.
                 for id_conexion in self.expandir(id_nodo):
-                    # Visitamos el nodo en la expancion y lo agregamos a los nodos visitados.
+                    # Visitamos el nodo en la expancion y lo agregamos a
+                    # los nodos visitados.
                     cola_visitas.append(self.DFS(id_conexion, cola_visitas))
 
             # Al terminar, retornamos el nodo expandido.

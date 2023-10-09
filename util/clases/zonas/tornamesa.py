@@ -9,13 +9,15 @@ class Tornamesa(Zona):
         self,
         id: str,
         evaluacion,
-        frames_movimiento: int = 20
+        frames_movimiento: int = 20,
+        posicion: tuple = None
     ) -> None:
         # Inicializamos la clase padre.
         super().__init__(
             id,
             TIPO_ZONA.TORNAMESA,
-            frames_movimiento
+            frames_movimiento,
+            posicion=posicion
         )
 
         self.__evaluacion = evaluacion

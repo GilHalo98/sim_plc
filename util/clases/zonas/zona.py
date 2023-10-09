@@ -10,7 +10,8 @@ class Zona():
         id: str,
         tipo_zona: TIPO_ZONA,
         frames_movimiento: int,
-        conexion_con_linea: tuple = None
+        conexion_con_linea: tuple = None,
+        posicion: tuple = None
     ) -> None:
         # ID de la zona dentro de la linea.
         self.__id: str = id
@@ -26,6 +27,9 @@ class Zona():
 
         # Conexion entre lineas.
         self.__conexion_con_linea: tuple = conexion_con_linea
+
+        # Posición en el grid del gui de la zona.
+        self.__posicion: tuple = posicion
 
     def __str__(self) -> str:
         msj = '{} en {} en movimiento {}: {}'
@@ -55,6 +59,10 @@ class Zona():
     @property
     def conexion_con_linea(self) -> tuple:
         return self.__conexion_con_linea
+
+    @property
+    def posicion(self) -> tuple:
+        return self.__posicion
 
     @conexion_con_linea.setter
     def conexion_con_linea(self, conexion: tuple) -> None:

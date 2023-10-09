@@ -14,13 +14,15 @@ class Estacion(Zona):
         id: str,
         procesar_pieza,
         frames_movimiento: int = 20,
-        frames_proceso: int = 200
+        frames_proceso: int = 200,
+        posicion: tuple = None
     ) -> None:
         # Inicializamos la clase padre.
         super().__init__(
             id,
             TIPO_ZONA.ESTACION,
-            frames_movimiento
+            frames_movimiento,
+            posicion=posicion
         )
 
         # Id de la pieza anteriormente inspeccionada.

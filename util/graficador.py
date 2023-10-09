@@ -2,6 +2,7 @@ from graphviz import Graph
 from .clases.lineas.linea import Linea
 from .clases.zonas.tipos import TIPO_ZONA
 
+
 def graficar_linea(
     linea: Linea,
     archivo_salida: str
@@ -12,7 +13,7 @@ def graficar_linea(
     )
 
     for nodo in linea.elementos:
-        figura = 'box'
+        figura: str = 'box'
         if linea.elementos[nodo].tipo_zona is TIPO_ZONA.BRAZO_ROBOTICO:
             figura = 'circle'
         elif linea.elementos[nodo].tipo_zona is TIPO_ZONA.ESTACION:

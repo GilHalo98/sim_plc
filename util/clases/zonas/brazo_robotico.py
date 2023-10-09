@@ -12,13 +12,15 @@ class Brazo_Robotico(Zona):
         id: str,
         evaluacion,
         frames_movimiento: int = 20,
-        frames_proceso: int = 100
+        frames_proceso: int = 100,
+        posicion: tuple = None
     ) -> None:
         # Inicializamos la clase padre.
         super().__init__(
             id,
             TIPO_ZONA.BRAZO_ROBOTICO,
-            frames_movimiento
+            frames_movimiento,
+            posicion=posicion
         )
 
         # Evaluacion de la pieza para el filtro del brazo robotico.

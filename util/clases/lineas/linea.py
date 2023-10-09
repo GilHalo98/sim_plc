@@ -141,5 +141,5 @@ class Linea(Grafo):
         if self.__temporizador_request.en_espera():
             self.__temporizador_request.update()
         else:
-            self.enviar_datos_API()
+            # self.enviar_datos_API()
             self.__temporizador_request.reset()
