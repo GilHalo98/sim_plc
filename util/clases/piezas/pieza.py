@@ -12,24 +12,23 @@ class Pieza():
         # Datamatrix de la pieza.
         self.__data_matrix: str = None
 
-        # Status de la piezaz.
-        self.__status: STATUS = STATUS.INDEFINIDA
-
-        # Status de la prueba de leak.
-        self.__status_leak: STATUS = STATUS.INDEFINIDA
+        # Status de las pruebas.
+        self.__status: dict = dict()
 
         # Tipo de pieza.
         self.__tipo_pieza: TIPO_PIEZA = TIPO_PIEZA.INDEFINIDA
 
     def __str__(self) -> str:
-        mjs: str = 'ID: {}\tTipo de pieza: {}\tDatamatrix: {}\tStatus inspeccion: {}\tStatus leak: {}'
+        msj: str = 'ID: {}'
+        msj += '\tTipo de pieza: {}'
+        msj += '\tDatamatrix: {}'
+        msj += '\tStatus inspeccion: {}'
 
-        return mjs.format(
+        return msj.format(
             self.__id,
             self.__tipo_pieza,
             self.__data_matrix,
-            self.__status,
-            self.__status_leak
+            self.__status
         )
 
     @property
@@ -45,10 +44,6 @@ class Pieza():
         return self.__status
 
     @property
-    def status_leak(self) -> STATUS:
-        return self.__status_leak
-
-    @property
     def tipo_pieza(self) -> TIPO_PIEZA:
         return self.__tipo_pieza
 
@@ -56,14 +51,10 @@ class Pieza():
     def data_matrix(self, data_matrix: str) -> None:
         self.__data_matrix = data_matrix
 
-    @status.setter
-    def status(self, status: STATUS) -> None:
-        self.__status = status
-
-    @status_leak.setter
-    def status_leak(self, status_leak: STATUS) -> None:
-        self.__status_leak = status_leak
-
     @tipo_pieza.setter
     def tipo_pieza(self, tipo_pieza: TIPO_PIEZA) -> None:
         self.__tipo_pieza = tipo_pieza
+
+    def set_status(self, **new_status) -> None:
+        for id_status in new_status:
+            self.__status[id_status] = new_status[id_status]

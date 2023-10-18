@@ -1,10 +1,10 @@
 import os
 import time
 import random
-import pathlib
 
 import pygame
 
+from util.clases.controladores.plc import Plc
 from util.clases.lineas.linea import Linea
 from util.clases.zonas.conveyor import Conveyor
 from util.clases.zonas.estacion import Estacion
@@ -16,6 +16,7 @@ from util.clases.piezas.tipos import TIPO_PIEZA
 from util.clases.zonas.eventos import EVENTOS
 from util.graficador import graficar_linea
 from util.gui.ventana import Ventana
+from util.db_manager import Dbm
 
 
 def evaluacion_pieza_tornamesa(
@@ -23,7 +24,7 @@ def evaluacion_pieza_tornamesa(
     pieza: Pieza,
     iniciar_esperas: bool
 ) -> int:
-    if pieza.status is not STATUS.OK:
+    if pieza.status['final_test'] is not STATUS.OK:
         return 0
 
     return 1
@@ -34,7 +35,7 @@ def evaluacion_pieza_brazo_robotico(
     pieza: Pieza,
     iniciar_esperas: bool
 ) -> int:
-    if pieza.status_leak is STATUS.INDEFINIDA:
+    if pieza.status['leak_test'] is STATUS.INDEFINIDA:
         if iniciar_esperas:
             robot.iniciar_espera_por_evento(
                 'estacion_pruebas_1',
@@ -45,18 +46,18 @@ def evaluacion_pieza_brazo_robotico(
 
     else:
         if pieza.tipo_pieza is TIPO_PIEZA.CUATRO_CILINDROS:
-            return 1 if pieza.status_leak is STATUS.OK else 3
+            return 1 if pieza.status['leak_test'] is STATUS.OK else 3
 
         elif pieza.tipo_pieza is TIPO_PIEZA.SEIS_CILINDROS:
-            return 2 if pieza.status_leak is STATUS.OK else 4
+            return 2 if pieza.status['leak_test'] is STATUS.OK else 4
 
 
 def evaluacion_leak(estacion: Estacion, pieza: Pieza) -> tuple:
     if pieza.data_matrix is None:
-        pieza.status_leak = STATUS.NO_DATA_MATRIX
+        pieza.status['leak_test'] = STATUS.NO_DATA_MATRIX
 
     else:
-        pieza.status_leak = random.choice([
+        pieza.status['leak_test'] = random.choice([
             STATUS.OK,
             STATUS.RECHAZADA
         ])
@@ -69,10 +70,10 @@ def evaluacion_leak(estacion: Estacion, pieza: Pieza) -> tuple:
 
 def procesar_pieza_inspeccion(estacion: Estacion, pieza: Pieza) -> None:
     if pieza.data_matrix is None:
-        pieza.status = STATUS.NO_DATA_MATRIX
+        pieza.status['final_test'] = STATUS.NO_DATA_MATRIX
 
     else:
-        pieza.status = random.choice([
+        pieza.status['final_test'] = random.choice([
             STATUS.OK,
             STATUS.RECHAZADA
         ])
@@ -82,11 +83,18 @@ def grabar_data_matrix(estacion: Estacion, pieza: Pieza) -> None:
     data_matrix = random.randint(1e3, 9e3)
     pieza.data_matrix = '{}'.format(data_matrix)
     pieza.tipo_pieza = random.choice([*TIPO_PIEZA][1:])
+    pieza.set_status(
+        leak_test=STATUS.INDEFINIDA,
+        final_test=STATUS.INDEFINIDA
+    )
 
 
 def main() -> None:
+    database_manager: Dbm = Dbm('temp.db')
+
     linea_final_seis_cilindros: Linea = Linea(
         'linea_final_seis_cilindros',
+        Plc('plc_3', database_manager),
         'conveyor_1',
         ['rechazo_3', 'conveyor_7', 'rechazo_6'],
         {
@@ -149,6 +157,7 @@ def main() -> None:
 
     linea_final_cuatro_cilindros: Linea = Linea(
         'linea_final_cuatro_cilindros',
+        Plc('plc_2', database_manager),
         'conveyor_1',
         ['rechazo_3', 'conveyor_7', 'rechazo_6'],
         {
@@ -210,6 +219,7 @@ def main() -> None:
 
     linea_leak_tester: Linea = Linea(
         'linea_leak_tester',
+        Plc('plc_1', database_manager),
         'conveyor_1',
         ['conveyor_cuatro_cilindros_4', 'conveyor_seis_cilindros_4'],
         {
@@ -348,6 +358,7 @@ def main() -> None:
 
     linea_grabadora_lazer: Linea = Linea(
         'linea_grabadora_lazer',
+        Plc('plc_0', database_manager),
         'conveyor_1',
         ['conveyor_4'],
         {
@@ -360,50 +371,56 @@ def main() -> None:
         {
             'conveyor_1': Conveyor('conveyor_1', posicion=(0,0)),
             'conveyor_2': Conveyor('conveyor_2', posicion=(1,0)),
-            'grabadora_lazer': Estacion('grabadora_lazer', grabar_data_matrix, posicion=(2,0)),
+            'grabadora_lazer': Estacion(
+                'grabadora_lazer',
+                grabar_data_matrix,
+                posicion=(2,0)
+            ),
             'conveyor_3': Conveyor('conveyor_3', posicion=(3,0)),
             'conveyor_4': Conveyor('conveyor_4', posicion=(4,0)),
         },
         {
-            'conveyor_4': (linea_leak_tester, 'conveyor_1')
+            'conveyor_4': (
+                linea_leak_tester,
+                'conveyor_1'
+            )
         }
     )
 
-    id_conteo = 0
+    lineas: list = [
+        linea_grabadora_lazer,
+        linea_leak_tester,
+        linea_final_seis_cilindros,
+        linea_final_cuatro_cilindros
+    ]
+
+    id_conteo = 1
 
     ventana: Ventana = Ventana()
 
-    ventana.buffer.append(
-        linea_grabadora_lazer,
-    )
-    ventana.buffer.append(
-        linea_leak_tester
+    ventana.add_to_draw_buffer(
+        *lineas
     )
 
-    ventana.buffer.append(
-        linea_final_seis_cilindros
-    )
-
-    ventana.buffer.append(
-        linea_final_cuatro_cilindros
-    )
+    for linea in lineas:
+        database_manager.registrar_linea(linea)
 
     while ventana.ejecutando:
-
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 ventana.ejecutando = False
-            if evento.type == pygame.KEYDOWN:
-                if evento.key== pygame.K_w:
-                    id_conteo += 1
-                    linea_grabadora_lazer.push_pieza(Pieza(id_conteo))
 
+            if evento.type == pygame.KEYDOWN:
+                if evento.key == pygame.K_w:
+                    if linea_grabadora_lazer.push_pieza(Pieza(id_conteo)):
+                        id_conteo += 1
 
         ventana.update()
         pygame.display.flip()
         ventana.reloj.tick(60)
 
     pygame.quit()
+
 
 if __name__ == '__main__':
     os.system('clear')

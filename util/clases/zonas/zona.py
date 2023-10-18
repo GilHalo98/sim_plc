@@ -23,7 +23,9 @@ class Zona():
         self.__pieza_en_zona: Pieza = None
 
         # Temporizador de espera para terminar el movimiento.
-        self.__temporizador_movimiento: Temporizador = Temporizador(frames_movimiento)
+        self.__temporizador_movimiento: Temporizador = Temporizador(
+            frames_movimiento
+        )
 
         # Conexion entre lineas.
         self.__conexion_con_linea: tuple = conexion_con_linea
@@ -71,10 +73,14 @@ class Zona():
     def es_interconexion(self) -> bool:
         return False if self.__conexion_con_linea is None else True
 
-    def ingresar_pieza(self, pieza: Pieza) -> None:
+    def ingresar_pieza(self, pieza: Pieza) -> bool:
         if pieza is not None:
             if self.zona_libre():
                 self.__pieza_en_zona = pieza
+
+                return True
+
+        return False
 
     def mover_pieza(self) -> Pieza:
         if not self.zona_libre():
@@ -99,30 +105,50 @@ class Zona():
     def step(self, linea: Linea) -> EVENTOS:
         if not self.__temporizador_movimiento.en_espera():
             if not linea.elemento_es_hoja(self.id):
-                zona_siguiente: Zona = linea.elementos[linea.expandir(self.id)[0]]
+                zona_siguiente: Zona = linea.elementos[
+                    linea.expandir(self.id)[0]
+                ]
 
-                if zona_siguiente.zona_libre() and not zona_siguiente.en_espera_de_evento():
+                if(
+                    zona_siguiente.zona_libre()
+                    and not zona_siguiente.en_espera_de_evento()
+                ):
                     zona_siguiente.ingresar_pieza(self.mover_pieza())
 
             else:
                 linea_siguiente: Linea = self.__conexion_con_linea[0]
-                zona_siguiente: Zona = linea_siguiente.elementos[self.__conexion_con_linea[1]]
+                zona_siguiente: Zona = linea_siguiente.elementos[
+                    self.__conexion_con_linea[1]
+                ]
 
-                if zona_siguiente.zona_libre() and not zona_siguiente.en_espera_de_evento():
+                if(
+                    zona_siguiente.zona_libre()
+                    and not zona_siguiente.en_espera_de_evento()
+                ):
                     zona_siguiente.ingresar_pieza(self.mover_pieza())
 
             self.__temporizador_movimiento.reset()
 
         if not self.zona_libre():
             if not linea.elemento_es_hoja(self.id):
-                zona_siguiente: Zona = linea.elementos[linea.expandir(self.id)[0]]
-                if zona_siguiente.zona_libre() and not zona_siguiente.en_espera_de_evento():
+                zona_siguiente: Zona = linea.elementos[
+                    linea.expandir(self.id)[0]
+                ]
+                if(
+                    zona_siguiente.zona_libre()
+                    and not zona_siguiente.en_espera_de_evento()
+                ):
                     self.__temporizador_movimiento.update()
 
             else:
                 if self.es_interconexion():
                     linea_siguiente: Linea = self.__conexion_con_linea[0]
-                    zona_siguiente: Zona = linea_siguiente.elementos[self.__conexion_con_linea[1]]
+                    zona_siguiente: Zona = linea_siguiente.elementos[
+                        self.__conexion_con_linea[1]
+                    ]
 
-                    if zona_siguiente.zona_libre() and not zona_siguiente.en_espera_de_evento():
+                    if(
+                        zona_siguiente.zona_libre()
+                        and not zona_siguiente.en_espera_de_evento()
+                    ):
                         self.__temporizador_movimiento.update()
