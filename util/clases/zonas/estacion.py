@@ -13,7 +13,7 @@ class Estacion(Zona):
         self,
         id: str,
         procesar_pieza,
-        frames_movimiento: int = 20,
+        frames_movimiento: int = 160,
         frames_proceso: int = 200,
         posicion: tuple = None
     ) -> None:

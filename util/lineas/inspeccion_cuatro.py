@@ -60,7 +60,7 @@ class Inspeccion_Cuatro(Linea):
             'estacion_1': Estacion(
                 'estacion_1',
                 self.procesar_pieza_inspeccion,
-                frames_proceso=60, posicion=(10,5)
+                frames_proceso=180, posicion=(10,5)
             ),
             'conveyor_2': Conveyor('conveyor_2', posicion=(11,5)),
             'tornamesa_1': Tornamesa(
@@ -75,7 +75,7 @@ class Inspeccion_Cuatro(Linea):
             'estacion_2': Estacion(
                 'estacion_2',
                 self.procesar_pieza_inspeccion,
-                frames_proceso=60,
+                frames_proceso=180,
                 posicion=(14,5)
             ),
             'conveyor_4': Conveyor('conveyor_4', posicion=(15,5)),

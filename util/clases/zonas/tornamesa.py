@@ -9,7 +9,7 @@ class Tornamesa(Zona):
         self,
         id: str,
         evaluacion,
-        frames_movimiento: int = 20,
+        frames_movimiento: int = 160,
         posicion: tuple = None
     ) -> None:
         # Inicializamos la clase padre.

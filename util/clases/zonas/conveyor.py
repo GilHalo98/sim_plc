@@ -7,7 +7,7 @@ class Conveyor(Zona):
     def __init__(
         self,
         id: str,
-        frames_movimiento: int = 20,
+        frames_movimiento: int = 160,
         posicion: tuple = None
     ) -> None:
         # Inicializamos la clase padre.

@@ -11,8 +11,8 @@ class Brazo_Robotico(Zona):
         self,
         id: str,
         evaluacion,
-        frames_movimiento: int = 20,
-        frames_proceso: int = 100,
+        frames_movimiento: int = 160,
+        frames_proceso: int = 180,
         posicion: tuple = None
     ) -> None:
         # Inicializamos la clase padre.

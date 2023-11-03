@@ -19,7 +19,7 @@ class Plc():
         self.__cola_eventos: dict  = dict()
 
         # Temporizador de consultas a DB.
-        self.__temporizador_db: Temporizador = Temporizador(20)
+        self.__temporizador_db: Temporizador = Temporizador(100)
 
         # Instancia del database manager.
         self.__database_manager: Dbm = database_manager
