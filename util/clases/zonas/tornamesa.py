@@ -17,7 +17,8 @@ class Tornamesa(Zona):
             id,
             TIPO_ZONA.TORNAMESA,
             frames_movimiento,
-            posicion=posicion
+            posicion=posicion,
+            descripcion='Tornamesa de 90°'
         )
 
         self.__evaluacion = evaluacion

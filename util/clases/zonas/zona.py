@@ -11,10 +11,14 @@ class Zona():
         tipo_zona: TIPO_ZONA,
         frames_movimiento: int,
         conexion_con_linea: tuple = None,
-        posicion: tuple = None
+        posicion: tuple = None,
+        descripcion: str = ''
     ) -> None:
         # ID de la zona dentro de la linea.
         self.__id: str = id
+
+        # Descripcion de la zona.
+        self.__descripcion: str = descripcion
 
         # Indica el tipo de zona.
         self.__tipo_zona: TIPO_ZONA = tipo_zona
@@ -47,6 +51,10 @@ class Zona():
         return self.__id
 
     @property
+    def descripcion(self) -> str:
+        return self.__descripcion
+
+    @property
     def tipo_zona(self) -> TIPO_ZONA:
         return self.__tipo_zona
 
@@ -65,6 +73,10 @@ class Zona():
     @property
     def posicion(self) -> tuple:
         return self.__posicion
+
+    @descripcion.setter
+    def descripcion(self, descripcion: str) -> None:
+        self.__descripcion = descripcion
 
     @conexion_con_linea.setter
     def conexion_con_linea(self, conexion: tuple) -> None:

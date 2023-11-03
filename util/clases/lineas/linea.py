@@ -14,13 +14,17 @@ class Linea(Grafo):
         zonas_finales: list = list(),
         conexiones: dict = dict(),
         zonas: dict = dict(),
-        lineas_conectadas: dict = dict()
+        lineas_conectadas: dict = dict(),
+        descripcion: str = ''
     ) -> None:
         # Inicializamos la clase padre, que este en caso es un grafo.
         super().__init__(conexiones, zonas)
 
         # ID de la linea.
         self.__id_linea: str = id_linea
+
+        # Descripcion de la linea.
+        self.__descripcion: str = descripcion
 
         # PLC controlador de la linea.
         self.__plc: Plc = plc
@@ -53,6 +57,10 @@ class Linea(Grafo):
     @property
     def id(self) -> str:
         return self.__id_linea
+    
+    @property
+    def descripcion(self) -> str:
+        return self.__descripcion
 
     @property
     def zona_inicial(self) -> str:
@@ -65,6 +73,14 @@ class Linea(Grafo):
     @property
     def lineas_conectadas(self) -> dict:
         return self.__lineas_conectadas
+
+    @property
+    def plc(self) -> Plc:
+        return self.__plc
+
+    @descripcion.setter
+    def descripcion(self, descripcion: str) -> None:
+        self.__descripcion = descripcion
 
     @lineas_conectadas.setter
     def lineas_conectadas(self, lineas_conectadas: dict) -> None:
@@ -93,7 +109,10 @@ class Linea(Grafo):
     def pop_pieza(self, id_zona: str) -> Pieza:
         if self.elemento_es_hoja(id_zona):
             zona = self.elementos[id_zona]
-            return zona.mover_pieza()
+            pieza: Pieza = zona.mover_pieza()
+            if pieza != None:
+                self.__plc.add_pieza_removida(pieza.data_matrix)
+            return pieza
 
         return None
 

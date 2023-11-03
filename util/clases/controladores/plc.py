@@ -24,6 +24,9 @@ class Plc():
         # Instancia del database manager.
         self.__database_manager: Dbm = database_manager
 
+        # Lista de piezas removidas.
+        self.__piezas_removidas: list[str] = list()
+
     def __str__(self) -> None:
         pass
 
@@ -31,8 +34,16 @@ class Plc():
     def cola_eventos(self) -> dict:
         return self.__cola_eventos
 
+    @property
+    def database_manager(self) -> Dbm:
+        return self.__database_manager
+
+    def add_pieza_removida(self, id_pieza_removida) -> None:
+        self.__piezas_removidas.append(id_pieza_removida)
+
     def procesar_percepcion(self, linea: 'Linea') -> dict:
         percepcion: dict = dict()
+
         for id_zona in linea.elementos:
             zona: 'Zona' = linea.elementos[id_zona]
 
@@ -59,11 +70,22 @@ class Plc():
         zonas_actualizadas: list = list()
         
         if not self.__temporizador_db.en_espera():
-            self.__database_manager.update_estado_piezas(
-                linea.id,
-                self.procesar_percepcion(linea)
-            )
+            percepcion: dict = self.procesar_percepcion(linea)
+
+            if len(self.__piezas_removidas) > 0:
+                self.__database_manager.update_piesas_removidas(
+                    self.__piezas_removidas
+                )
+                self.__piezas_removidas = list()
+
+            if len(percepcion) > 0:
+                self.__database_manager.update_percepcion(
+                    linea.id,
+                    percepcion
+                )
+
             self.__temporizador_db.reset()
+
         self.__temporizador_db.update()
 
         for id_zona in self.__cola_actualizacion:

@@ -22,7 +22,8 @@ class Estacion(Zona):
             id,
             TIPO_ZONA.ESTACION,
             frames_movimiento,
-            posicion=posicion
+            posicion=posicion,
+            descripcion='Estación de operaciones'
         )
 
         # Id de la pieza anteriormente inspeccionada.

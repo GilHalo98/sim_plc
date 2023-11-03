@@ -15,5 +15,6 @@ class Conveyor(Zona):
             id,
             TIPO_ZONA.CONVEYOR,
             frames_movimiento,
-            posicion=posicion
+            posicion=posicion,
+            descripcion='conveyor de rodillos'
         )

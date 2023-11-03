@@ -20,7 +20,8 @@ class Brazo_Robotico(Zona):
             id,
             TIPO_ZONA.BRAZO_ROBOTICO,
             frames_movimiento,
-            posicion=posicion
+            posicion=posicion,
+            descripcion='Brazo robotico industrial'
         )
 
         # Evaluacion de la pieza para el filtro del brazo robotico.
